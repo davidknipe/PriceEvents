@@ -257,6 +257,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\PriceDeletingEventArgs.cs" />
     <Compile Include="Events\PriceEventArgs.cs" />
     <Compile Include="Events\PriceEventsHandler.cs" />
     <Compile Include="Init\EnrichmentOf.cs" />

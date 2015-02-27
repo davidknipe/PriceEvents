@@ -14,11 +14,12 @@ namespace PriceEvents.Interceptors
     {
         public void Intercept(IInvocation invocation)
         {
+            invocation.Proceed();
+
             if (invocation.MethodInvocationTarget.Name == "SetCatalogEntryPrices")
             {
                 this.broadcastEvent(invocation.Arguments);
             }
-            invocation.Proceed();
         }
 
         private void broadcastEvent(object[] methodArguments)
@@ -30,7 +31,7 @@ namespace PriceEvents.Interceptors
                 if (priceValues != null)
                 {
                     var prices = priceValues.ToList().ConvertAll<IPriceValue>(x => x as IPriceValue);
-                    PriceEventsHandler.Instance.RaisePriceSaved(this, new UsernameHelper().GetCurrentUsername(), priceValues);
+                    PriceEventsHandler.Instance.RaisePriceChanged(this, new UsernameHelper().GetCurrentUsername(), priceValues);
                 }
             }
         }

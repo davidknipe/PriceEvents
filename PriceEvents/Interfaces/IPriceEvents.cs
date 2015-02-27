@@ -9,5 +9,6 @@ namespace PriceEvents.Interfaces
     public interface IPriceEvents
     {
         event EventHandler<PriceEventArgs> PriceChanged;
+        event EventHandler<PriceDeletingEventArgs> PriceDeleting;
     }
 }

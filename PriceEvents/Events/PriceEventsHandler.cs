@@ -17,6 +17,7 @@ namespace PriceEvents.Events
         private static PriceEventsHandler _instance;
         private static object _keyLock = new object();
         internal const string PriceChangedEvent = "PriceChangedEvent";
+        internal const string PriceDeletingEvent = "PriceDeletingEvent";
 
         public event EventHandler<PriceEventArgs> PriceChanged
         {
@@ -30,12 +31,33 @@ namespace PriceEvents.Events
             }
         }
 
-        internal virtual void RaisePriceSaved(object sender, string userName, IEnumerable<IPriceValue> prices)
+        internal virtual void RaisePriceChanged(object sender, string userName, IEnumerable<IPriceValue> prices)
         {
             EventHandler<PriceEventArgs> handler = this.Events[this.GetEventKey(PriceEventsHandler.PriceChangedEvent)] as EventHandler<PriceEventArgs>;
             if (handler != null)
             {
                 handler(this, new PriceEventArgs() { User = userName, PriceValues = prices });
+            }
+        }
+
+        public event EventHandler<PriceDeletingEventArgs> PriceDeleting
+        {
+            add
+            {
+                this.Events.AddHandler(this.GetEventKey(PriceEventsHandler.PriceDeletingEvent), value);
+            }
+            remove
+            {
+                this.Events.RemoveHandler(this.GetEventKey(PriceEventsHandler.PriceDeletingEvent), value);
+            }
+        }
+
+        internal virtual void RaisePriceDeleting(object sender, string userName, IEnumerable<long> priceValueIds)
+        {
+            EventHandler<PriceDeletingEventArgs> handler = this.Events[this.GetEventKey(PriceEventsHandler.PriceDeletingEvent)] as EventHandler<PriceDeletingEventArgs>;
+            if (handler != null)
+            {
+                handler(this, new PriceDeletingEventArgs() { User = userName, PriceValueIds = priceValueIds });
             }
         }
 
