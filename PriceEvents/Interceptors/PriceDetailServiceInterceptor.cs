@@ -2,6 +2,7 @@
 using Mediachase.Commerce.Pricing;
 using Mediachase.Commerce.Security;
 using PriceEvents.Events;
+using PriceEvents.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,48 +12,52 @@ namespace PriceEvents.Interceptors
     /// Interceptor for <see cref="IPriceDetailService"/>. Will listen in for the Save event 
     /// and broadcast events to notifiy users of price changes or deletions
     /// </summary>
-public class PriceDetailServiceInterceptor : IInterceptor
-{
-    public void Intercept(IInvocation invocation)
+    public class PriceDetailServiceInterceptor : IInterceptor
     {
-        if (invocation.MethodInvocationTarget.Name == "Delete")
-        {
-            this.broadcastPriceDeletingEvent(invocation.Arguments);
-        }
+        private const int ARGUMENT_INDEX = 0;
 
-        invocation.Proceed();
-
-        if (invocation.MethodInvocationTarget.Name == "Save")
+        public void Intercept(IInvocation invocation)
         {
-            this.broadcastPriceChangedEvent(invocation.Arguments);
-        }
-    }
-
-        private void broadcastPriceChangedEvent(object[] methodArguments)
-        {
-            //Expecting a method arguement where the first item is IEnumerable<IPriceDetailValue> 
-            if (methodArguments != null && methodArguments.Length == 1 && methodArguments[0] != null)
+            if (invocation.MethodInvocationTarget.Name == "Delete")
             {
-                var priceValues = methodArguments[0] as IEnumerable<IPriceDetailValue>;
-                if (priceValues != null)
-                {
-                    var prices = priceValues.ToList().ConvertAll<IPriceValue>(x => x as IPriceValue);
-                    PriceEventsHandler.Instance.RaisePriceChanged(this, new UsernameHelper().GetCurrentUsername(), prices);
-                }
+                this.BroadcastPriceDeletingEvent(invocation.Arguments);
+            }
+
+            invocation.Proceed();
+
+            if (invocation.MethodInvocationTarget.Name == "Save")
+            {
+                this.BroadcastPriceChangedEvent(invocation.Arguments);
             }
         }
 
-        private void broadcastPriceDeletingEvent(object[] methodArguments)
+        private void BroadcastPriceChangedEvent(object[] methodArguments)
         {
-            //Expecting a method arguement where the first item is IEnumerable<long> 
-            if (methodArguments != null && methodArguments.Length == 1 && methodArguments[0] != null)
-            {
-                var priceValueIds = methodArguments[0] as IEnumerable<long>;
-                if (priceValueIds != null)
-                {
-                    PriceEventsHandler.Instance.RaisePriceDeleting(this, new UsernameHelper().GetCurrentUsername(), priceValueIds);
-                }
-            }
+            if (!PriceEventHelpers.IsMethodArgumentsValid(methodArguments, ARGUMENT_INDEX))
+                return;
+
+            var priceValues = methodArguments.FirstOrDefault() as IEnumerable<IPriceDetailValue>;
+
+            if (priceValues == null)
+                return;
+
+            var prices = priceValues.ToList().ConvertAll<IPriceValue>(x => x as IPriceValue);
+            PriceEventsHandler.Instance.RaisePriceChanged(this, PriceEventHelpers.GetCurrentUsername(),
+                prices);
+        }
+
+        private void BroadcastPriceDeletingEvent(object[] methodArguments)
+        {
+            if (!PriceEventHelpers.IsMethodArgumentsValid(methodArguments, ARGUMENT_INDEX))
+                return;
+
+            var priceValueIds = methodArguments.FirstOrDefault() as IEnumerable<long>;
+
+            if (priceValueIds == null)
+                return;
+
+            PriceEventsHandler.Instance.RaisePriceDeleting(this, PriceEventHelpers.GetCurrentUsername(),
+                priceValueIds);
         }
     }
 }

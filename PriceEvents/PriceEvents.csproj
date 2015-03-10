@@ -260,6 +260,8 @@
     <Compile Include="Events\PriceDeletingEventArgs.cs" />
     <Compile Include="Events\PriceEventArgs.cs" />
     <Compile Include="Events\PriceEventsHandler.cs" />
+    <Compile Include="Helpers\PriceEventResources.cs" />
+    <Compile Include="Helpers\PriceEventHelpers.cs" />
     <Compile Include="Init\EnrichmentOf.cs" />
     <Compile Include="Interceptors\UsernameHelper.cs" />
     <Compile Include="Interfaces\IPriceEvents.cs" />

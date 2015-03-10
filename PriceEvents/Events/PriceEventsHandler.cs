@@ -1,5 +1,6 @@
 ﻿using EPiServer.ServiceLocation;
 using Mediachase.Commerce.Pricing;
+using PriceEvents.Helpers;
 using PriceEvents.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,28 +13,28 @@ namespace PriceEvents.Events
     /// </summary>
     public class PriceEventsHandler : IPriceEvents, IDisposable
     {
-        private Dictionary<string, object> _eventKeys = new Dictionary<string, object>();
-        private EventHandlerList _events = new EventHandlerList();
         private static PriceEventsHandler _instance;
         private static object _keyLock = new object();
-        internal const string PriceChangedEvent = "PriceChangedEvent";
-        internal const string PriceDeletingEvent = "PriceDeletingEvent";
+
+        private Dictionary<string, object> _eventKeys = new Dictionary<string, object>();
+        private EventHandlerList _events = new EventHandlerList();
 
         public event EventHandler<PriceEventArgs> PriceChanged
         {
             add
             {
-                this.Events.AddHandler(this.GetEventKey(PriceEventsHandler.PriceChangedEvent), value);
+                this.Events.AddHandler(this.GetEventKey(PriceEventResources.PRICE_CHANGED_EVENT), value);
             }
             remove
             {
-                this.Events.RemoveHandler(this.GetEventKey(PriceEventsHandler.PriceChangedEvent), value);
+                this.Events.RemoveHandler(this.GetEventKey(PriceEventResources.PRICE_CHANGED_EVENT), value);
             }
         }
 
         internal virtual void RaisePriceChanged(object sender, string userName, IEnumerable<IPriceValue> prices)
         {
-            EventHandler<PriceEventArgs> handler = this.Events[this.GetEventKey(PriceEventsHandler.PriceChangedEvent)] as EventHandler<PriceEventArgs>;
+            EventHandler<PriceEventArgs> handler = 
+                this.Events[this.GetEventKey(PriceEventResources.PRICE_CHANGED_EVENT)] as EventHandler<PriceEventArgs>;
             if (handler != null)
             {
                 handler(this, new PriceEventArgs() { User = userName, PriceValues = prices });
@@ -44,17 +45,18 @@ namespace PriceEvents.Events
         {
             add
             {
-                this.Events.AddHandler(this.GetEventKey(PriceEventsHandler.PriceDeletingEvent), value);
+                this.Events.AddHandler(this.GetEventKey(PriceEventResources.PRICE_DELETING_EVENT), value);
             }
             remove
             {
-                this.Events.RemoveHandler(this.GetEventKey(PriceEventsHandler.PriceDeletingEvent), value);
+                this.Events.RemoveHandler(this.GetEventKey(PriceEventResources.PRICE_DELETING_EVENT), value);
             }
         }
 
         internal virtual void RaisePriceDeleting(object sender, string userName, IEnumerable<long> priceValueIds)
         {
-            EventHandler<PriceDeletingEventArgs> handler = this.Events[this.GetEventKey(PriceEventsHandler.PriceDeletingEvent)] as EventHandler<PriceDeletingEventArgs>;
+            EventHandler<PriceDeletingEventArgs> handler = 
+                this.Events[this.GetEventKey(PriceEventResources.PRICE_DELETING_EVENT)] as EventHandler<PriceDeletingEventArgs>;
             if (handler != null)
             {
                 handler(this, new PriceDeletingEventArgs() { User = userName, PriceValueIds = priceValueIds });
