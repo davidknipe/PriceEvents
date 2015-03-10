@@ -2,6 +2,7 @@
 using Mediachase.Commerce.Pricing;
 using Mediachase.Commerce.Security;
 using PriceEvents.Events;
+using PriceEvents.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,7 @@ namespace PriceEvents.Interceptors
                 if (priceValues != null)
                 {
                     var prices = priceValues.ToList().ConvertAll<IPriceValue>(x => x as IPriceValue);
-                    PriceEventsHandler.Instance.RaisePriceChanged(this, new UsernameHelper().GetCurrentUsername(), priceValues);
+                    PriceEventsHandler.Instance.RaisePriceChanged(this, PriceEventHelpers.GetCurrentUsername(), priceValues);
                 }
             }
         }

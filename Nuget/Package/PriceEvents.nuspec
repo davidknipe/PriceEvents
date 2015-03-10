@@ -10,7 +10,7 @@
    	<iconUrl>http://www.david-tec.com/global/media/episerver-commerce-price-events/priceeventsicon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Adds a PriceChanged event to an EPiServer Commerce solution. Subscribers of this event get notified whenever a price is changed or deleted</description>
-    <releaseNotes>v1.1.1 enhances code quality</releaseNotes>
+    <releaseNotes>v1.1.2 enhances code quality</releaseNotes>
     <tags>EPiServer Commerce</tags>
     <dependencies>
       <dependency id="EPiServer.Commerce.Core" version="[8.0.0, 10.0)" />

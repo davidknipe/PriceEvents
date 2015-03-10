@@ -263,7 +263,6 @@
     <Compile Include="Helpers\PriceEventResources.cs" />
     <Compile Include="Helpers\PriceEventHelpers.cs" />
     <Compile Include="Init\EnrichmentOf.cs" />
-    <Compile Include="Interceptors\UsernameHelper.cs" />
     <Compile Include="Interfaces\IPriceEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interceptors\PriceDetailServiceInterceptor.cs" />
